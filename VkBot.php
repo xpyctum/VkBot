@@ -8,11 +8,21 @@ class VkBot{
 
     private $access_token = "";
     private $scopes = [];
+    //Classes
+    /** @var  VkAudios */
+    private $audios;
     public function __construct($token = null){
         if(!is_null($token)){
             $this->access_token = $token;
         }
+        $this->init_classes();
     }
+
+    public function init_classes(){
+        $this->audios = new VkAudios($this->access_token);
+        //TODO: More Classes
+    }
+
 
     /**
      * @return null|string
@@ -78,13 +88,13 @@ class VkBot{
 
         $json = json_decode($json, true);
 
-        // ��������� ������ �� ������� VK, ���� ������ ��� https://vk.com/dev/errors
+        // Ошибки, которые могут возникнуть описаны тут: https://vk.com/dev/errors
         if($json['error']['error_msg'] != "Captcha needed") {
             if (isset($json['error'], $json['error']['error_msg'], $json['error']['error_code'])) {
                 throw new VkException($json['error']['error_msg'], $json['error']['error_code']);
             }
         }else{
-            echo "Error detected!\nCaptcha img: ".$json['error']['captcha_img']."\nNeed captcha!";
+            echo "Error detected! Need captcha! Captcha img: ".$json['error']['captcha_img'];
         }
 
         if(isset($json['response'])) return $json['response'];
@@ -112,6 +122,10 @@ class VkBot{
         }
 
         return false;
+    }
+
+    public function getAudios(){
+        return $this->audios;
     }
 
 }
