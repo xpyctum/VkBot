@@ -12,9 +12,10 @@ class VkWall extends VkBot{
      * @param int $count
      * @return array
      */
-    public function search($owner_id,$query,$count = 30){
+    public function search($owner_id,$query,$count = 20){
         $wall = $this->api("wall.search",array("owner_id" => $owner_id,"count" => $count,"query" => $query));
         return $wall["items"];
     }
+
 
 }
