@@ -11,4 +11,5 @@ class VkMessages extends VkBot{
     public function getMessagesByDialogID($id){}
 
     public function getMsgsByDID($id){$this->getMessagesByDialogID($id);}
+    
 }

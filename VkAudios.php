@@ -3,8 +3,8 @@
 class VkAudios extends VkBot{
 
 	private $genres = [
-			1 => "Rock", 2 => "Pop", 3 => "Rap & Hip-Hop", 4 => "Easy Listening", 5 => "Dance & House", 6 => "Instrumental", 7 => "Metal", 21 => "Alternative", 8 => "Dubstep", 9 => "Jazz & Blues", 10 => "Drum & Bass", 11 => "Trance", 12 => "Chanson", 13 => "Ethnic", 14 => "Acoustic & Vocal", 15 => "Reggae", 16 => "Classical", 17 => "Indie Pop", 19 => "Speech", 22 => "Electropop & Disco", 18 => "Other"
-		];
+        1 => "Rock", 2 => "Pop", 3 => "Rap & Hip-Hop", 4 => "Easy Listening", 5 => "Dance & House", 6 => "Instrumental", 7 => "Metal", 21 => "Alternative", 8 => "Dubstep", 9 => "Jazz & Blues", 10 => "Drum & Bass", 11 => "Trance", 12 => "Chanson", 13 => "Ethnic", 14 => "Acoustic & Vocal", 15 => "Reggae", 16 => "Classical", 17 => "Indie Pop", 19 => "Speech", 22 => "Electropop & Disco", 18 => "Other"
+    ];
 
 	public function __construct($token){
 		parent::__construct($token);
@@ -46,7 +46,7 @@ class VkAudios extends VkBot{
 			"need_user" => $need_user ? "1" : "0",
 			"offset" => $offset,
 			"count" => $count
-		)
+		);
 		if(!is_null($owner_id)){ $r["owner_id"] = $owner_id; }
 		return $this->api('audio.get',$r);
 	}
