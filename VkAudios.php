@@ -56,7 +56,7 @@ class VkAudios extends VkBot{
 			"offset" => $offset,
 			"count" => $count
 		);
-		if(!is_null($owner_id)){ $r["owner_id"] = $owner_id; }
+		if(!is_null($owner_id)) $r["owner_id"] = $owner_id;
 		return $this->api('audio.get',$r);
 	}
 	
@@ -93,7 +93,6 @@ class VkAudios extends VkBot{
 	 * @throws VkException
 	 * @return array
 	 */
-	
 	public function search($q, $auto_complete, $lyrics, $performer_only, $sort, $search_own, $offset = 0, $count = 30){
 		$r = array(
 			"q" => $q,
@@ -107,5 +106,91 @@ class VkAudios extends VkBot{
 		);
 		return $this->api("audio.search",$r);
 	}
-
+	
+	/**
+	 * @throws VkException
+	 * @return string
+	 */
+	public function getUploadServer(){
+		$r = $this->api("audio.search");
+		return $r['upload_url'];
+	}
+	
+	/**
+	 * @param int $audio_id 	- Audio file ID.
+	 * @param int $owner_id 	- ID of the user or community that owns the audio file.
+	 * @param int $group_id 	- Community ID, needed when adding the audio file to a community.
+	 * @param int $album_id
+	 * @throws VkException
+	 * @return int
+	 */
+	public function addAudio($audio_id, $owner_id, $group_id = null, $album_id = null){
+		$r = array("audio_id" => $audio_id, "owner_id" => $owner_id);
+		if(!is_null($group_id)) $r['group_id'] = $group_id;
+		if(!is_null($album_id)) $r['album_id'] = $album_id;
+		return $this->api("audio.add",$r);
+	}
+	
+	/**
+	 * @param int $audio_id - Audio file ID.
+	 * @param int $owner_id - ID of the user or community that owns the audio file.
+	 * @throws VkException
+	 * @return int
+	 */
+	public function deleteAudio($audio_id, $owner_id){
+		return $this->api("audio.delete",array("audio_id" => $audio_id,"owner_id" => $owner_id));
+	}
+	 
+	/**
+	 * @param int $owner_id			 - ID of the user or community that owns the audio file.
+	 * @param int $audio_id			 - Audio file ID.
+	 * @param string $artist		 - Name of the artist.
+	 * @param string $title			 - Title of the audio file.
+	 * @param string $text			 - Text of the lyrics of the audio file.
+	 * @param int/string $genre_name - Genre of the audio file. See the list of audio genres.
+	 * @param bool $no_search		 - true  — audio file will not be available for search
+	 *								   false — audio file will be available for search (default)
+	 * @throws VkException
+	 * @return int
+	 */
+	public function editAudio($owner_id, $audio_id, $artist = null, $title = null, $text = null, $genre_id = null, $no_search = false){
+		$r = array("owner_id" => $owner_id,"audio_id" => $audio_id);
+		if(!is_null($artist)) $r['artist'] = $artist;
+		if(!is_null($title)) $r['title'] = $title;
+		if(!is_null($text)) $r['text'] = $text;
+		if($no_search){ $r['no_search'] = 1; }else{ $r['no_search'] = 0; }
+		if(!is_null($genre_id)){
+			if(!is_numeric($genre_id)) $genre_id = $this->getIdGenreByName($genre_id);
+			if($genre_id != false) $r['genre_id'] = $genre_id;
+		}
+		return $this->api("audio.edit",$r);
+	}
+	
+	/**
+	 * @param int $audio_id	- Audio file ID.
+	 * @param int $owner_id	- ID of the user or community that owns the audio file. (current user id is used by default)
+	 * @param int $before	- ID of the audio file before which to place the audio file.
+	 * @param int $after	- ID of the audio file after which to place the audio file.
+	 * @throws VkException
+	 * @return int
+	 */
+	public function reorderAudio($audio_id, $owner_id = null, $before = null, $after = null){
+		$r = array("audio_id" => $audio_id);
+		if(!is_null($owner_id)) $r['owner_id'] = $owner_id;
+		if(!is_null($before)) $r['before'] = $before;
+		if(!is_null($after)) $r['after'] = $after;
+		return $this->api("audio.reorder",$r)
+	}
+	
+	/**
+	 * @param int $audio_id - Audio file ID.
+	 * @param int $owner_id - ID of the user or community that owns the audio file. (current user id is used by default)
+	 * @throws VkException
+	 * @return array
+	 */
+	 public function restoreAudio($audio_id, $owner_id = null){
+		 $r = array("audio_id" => $audio_id);
+		 if(!is_null($owner_id)) $r['owner_id'] = $owner_id;
+		 return $this->api("audio.restore",$r);
+	 }
 }
