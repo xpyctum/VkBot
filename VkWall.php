@@ -16,4 +16,5 @@ class VkWall extends VkBot{
         $wall = $this->api("wall.search",array("owner_id" => $owner_id,"count" => $count,"query" => $query));
         return $wall["items"];
     }
+
 }

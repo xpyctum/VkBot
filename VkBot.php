@@ -201,4 +201,5 @@ class VkBot{
     public function setConnectTimeout($connect_timeout){
         $this->connect_timeout = $connect_timeout;
     }
+
 }

@@ -98,4 +98,5 @@ class VkAudios extends VkBot{
 		);
 		return $this->api("audio.search",$r);
 	}
+
 }
