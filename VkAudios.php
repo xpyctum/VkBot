@@ -22,6 +22,15 @@ class VkAudios extends VkBot{
 		}
 	}
 
+	public function getIdGenreByName($name){
+		foreach($this->getGenres() as $id => $genre_name){
+			if(strtolower($genre_name) == strtolower($name)){
+				return $id;
+			}
+		}
+		return false;
+	}
+
     /**
      * @return array
      */
