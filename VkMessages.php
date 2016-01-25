@@ -21,8 +21,8 @@ class VkMessages extends VkBot{
      */
     public function sendMessageToUser($text,$user_id = null, $domain_name = null){
         $r = [];
-        if (!is_null($domain_name)) {$r["domain"] = $domain_name;}
-        if (!is_null($user_id)) {$r["user_id"] = $user_id;}
+        if (!is_null($domain_name)) $r["domain"] = $domain_name;
+        if (!is_null($user_id)) $r["user_id"] = $user_id;
         $r["message"] = $text;
         $this->api('messages.send',$r);
     }
@@ -58,7 +58,7 @@ class VkMessages extends VkBot{
             "filters" => $filters,
             "preview_length" => $preview_length
         ];
-        if(!is_null($offset)){ $r["offset"] = $offset;}
+        if(!is_null($offset)) $r["offset"] = $offset;
         $result = $this->api('messages.get',$r);
         if(isset($result["items"])){
             return $result["items"];
