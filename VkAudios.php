@@ -179,7 +179,7 @@ class VkAudios extends VkBot{
 		if(!is_null($owner_id)) $r['owner_id'] = $owner_id;
 		if(!is_null($before)) $r['before'] = $before;
 		if(!is_null($after)) $r['after'] = $after;
-		return $this->api("audio.reorder",$r)
+		return $this->api("audio.reorder",$r);
 	}
 	
 	/**
