@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__ . "/VkException.php");
 
 class VkBot{
 
@@ -9,31 +10,58 @@ class VkBot{
     private $access_token = "";
     private $scopes = [];
     private $app_id,$timeout,$connect_timeout;
+	private $is_standalone = false;
     //Classes
-    /** @var  VkAudios */
+    /** @var VkAccount */
+    private $account;
+    /** @var VkAudios */
     private $audios;
     /** @var VkMessages */
     private $messages;
     /** @var VkWall */
     private $wall;
 
-    public function __construct($token = null,$app_id = null){
+    public function __construct($token = null,$app_id = null,$inside_call=false){
         if(!is_null($token)){
             $this->access_token = $token;
         }
         if(!is_null($app_id)){
             $this->app_id = $app_id;
         }
-        $this->init_classes();
+		if($inside_call==false) $this->init_classes();
     }
 
     private function init_classes(){
-        $this->audios = new VkAudios($this->access_token);
-        $this->messages = new VkMessages($this->access_token);
-        $this->wall = new VkWall($this->access_token);
-        //TODO: More Classes
+		require_once(__DIR__ . "/VkAccount.php");
+		$this->account = new VkAccount($this->access_token,$this);
+		require_once(__DIR__ . "/VkApps.php");
+		$this->apps = new VkApps($this->access_token,$this);
+		
+		if(!is_null($this->app_id)){
+			$data = $this->apps->get($this->app_id);
+			$this->is_standalone = ($data["items"][0]["type"]=="standalone");
+		}
+		
+		if($this->account->audio){
+			require_once(__DIR__ . "/VkAudios.php");
+			$this->audios = new VkAudios($this->access_token,$this);
+		}
+		if($this->account->messages){
+			require_once(__DIR__ . "/VkMessages.php");
+			$this->messages = new VkMessages($this->access_token,$this);
+		}
+		if($this->account->wall){
+			require_once(__DIR__ . "/VkWall.php");
+			$this->wall = new VkWall($this->access_token,$this);
+        }
+		//TODO: More Classes
     }
-
+	
+	public function start(){
+		while(true){
+			
+		}
+	}
 
     /**
      * @return null|string
@@ -128,7 +156,6 @@ class VkBot{
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $param['query']);
             curl_setopt($curl, CURLOPT_TIMEOUT, $this->timeout);
-            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT ,$this->connect_timeout);
             $out = curl_exec($curl);
 
             curl_close($curl);
