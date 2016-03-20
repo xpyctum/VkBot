@@ -14,6 +14,8 @@ class VkBot{
     //Classes
     /** @var VkAccount */
     private $account;
+    /** @var VkApps */
+    private $apps;
     /** @var VkAudios */
     private $audios;
     /** @var VkMessages */
@@ -199,6 +201,10 @@ class VkBot{
      */
     public function setAppId($app_id){
         $this->app_id = $app_id;
+		if(!is_null($this->app_id)){
+			$data = $this->apps->get($this->app_id);
+			$this->is_standalone = ($data["items"][0]["type"]=="standalone");
+		}
     }
 
     /**
