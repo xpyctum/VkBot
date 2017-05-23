@@ -23,5 +23,5 @@ print_r($bot->getMessages()->getUnreadMessages()); // Покажет непро�
 - [x] Exception
 - [ ] Wall API
 - [x] Основной класс
-- [ ] ConfigParser
+- [x] ConfigParser
 - [ ] Обьекты информации
