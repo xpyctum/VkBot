@@ -170,21 +170,21 @@ class VkBot{
     /**
      * @return VkAudios
      */
-    public function getAudios(){
+    public function getAudiosApi(){
         return $this->audios;
     }
 
     /**
      * @return VkMessages
      */
-    public function getMessages(){
+    public function getMessagesApi(){
         return $this->messages;
     }
 
     /**
      * @return VkWall
      */
-    public function getWall(){
+    public function getWallApi(){
         return $this->wall;
     }
 
