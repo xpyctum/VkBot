@@ -1,8 +1,6 @@
 <?php
 
-class VkAccount{ //extends VkBot
-	private $client = null;
-	private $token = "";
+class VkAccount extends VkBot{
 
 	public $notify 		 = false; //+1
 	public $friends 	 = false; //+2
@@ -26,14 +24,8 @@ class VkAccount{ //extends VkBot
 	public $email 		 = false; //+4194304
 	public $market 		 = false; //+134217728
 	
-    public function __construct($token,$parent=null){
-        //parent::__construct($token);
-		$this->token = $token;
-		if(!is_null($parent)){
-			$this->client = $parent;
-		}else{
-			$this->client = new VkBot($token,null,true);
-		}
+    public function __construct(){
+        parent::__construct();
 		
 		$perms = $this->getAppPermissions();
 		if(($perms&1)>0) $this->notify = true;
@@ -64,7 +56,7 @@ class VkAccount{ //extends VkBot
      * @return array
      */
 	public function getCounters($filter){
-		return $this->client->api("account.getCounters",array("filter" => $filter));
+		return $this->api("account.getCounters",["filter" => $filter]);
 	}
 	
 	/** https://vk.com/dev/account.setNameInMenu
@@ -73,22 +65,22 @@ class VkAccount{ //extends VkBot
      * @return array
      */
 	public function setNameInMenu($user_id,$name){
-		return $this->client->api("account.setNameInMenu",array("user_id" => $user_id,"name" => $name));
+		return $this->api("account.setNameInMenu",["user_id" => $user_id,"name" => $name]);
 	}
 	
 	/** https://vk.com/dev/account.setOnline
 	 * @param $voip
-	 * @return bool
+	 * @return array
 	 */
-	public function setOnline($voip=false){
-		return $this->client->api("account.setOnline",array("voip" => ($voip==true?1:0)));
+	public function setOnline($voip = false){
+		return $this->api("account.setOnline", [ "voip" => ($voip == true ? 1 : 0) ]);
 	}
 	
 	/** https://vk.com/dev/account.setOffline
-	 * @return bool
+	 * @return array
 	 */
 	public function setOffline(){
-		return $this->client->api("account.setOffline");
+		return $this->api("account.setOffline");
 	}
 	
 	//TODO
@@ -131,7 +123,7 @@ class VkAccount{ //extends VkBot
 	 *
 	 */
 	function getAppPermissions($user_id = null){
-		return $this->client->api("account.getAppPermissions",(!is_null($user_id) ? array("user_id" => $user_id) : array()));
+		return $this->api("account.getAppPermissions",(!is_null($user_id) ? ["user_id" => $user_id] : [] ));
 	}
 	
 	//TODO

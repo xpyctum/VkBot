@@ -1,17 +1,9 @@
 <?php
 
-class VkWall{ //extends VkBot
-	private $client = null;
-	private $token = "";
+class VkWall extends VkBot{
 
-    public function __construct($token,$parent=null){
-        //parent::__construct($token);
-		$this->token = $token;
-		if(!is_null($parent)){
-			$this->client = $parent;
-		}else{
-			$this->client = new VkBot($token,null,true);
-		}
+    public function __construct(){
+        parent::__construct();
     }
 
     /**
@@ -20,8 +12,8 @@ class VkWall{ //extends VkBot
      * @param int $count
      * @return array
      */
-    public function search($owner_id,$query,$count = 20){
-        $wall = $this->client->api("wall.search",array("owner_id" => $owner_id,"count" => $count,"query" => $query));
+    public function search($owner_id,$query,$count = 20) : array {
+        $wall = $this->api("wall.search",["owner_id" => $owner_id,"count" => $count,"query" => $query]);
         return $wall["items"];
     }
 

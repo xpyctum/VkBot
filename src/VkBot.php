@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . "/VkException.php");
+require_once(__DIR__ . "/ConfigParser.php");
 
 class VkBot{
 
@@ -11,33 +12,35 @@ class VkBot{
     private $scopes = [];
     private $app_id,$timeout,$connect_timeout;
 	private $is_standalone = false;
-    //Classes
-    /** @var VkAccount */
-    private $account;
-    /** @var VkApps */
-    private $apps;
-    /** @var VkAudios */
-    private $audios;
-    /** @var VkMessages */
-    private $messages;
-    /** @var VkWall */
-    private $wall;
 
-    public function __construct($token = null,$app_id = null,$inside_call=false){
-        if(!is_null($token)){
-            $this->access_token = $token;
-        }
-        if(!is_null($app_id)){
-            $this->app_id = $app_id;
-        }
-		if($inside_call==false) $this->init_classes();
+    /** @var VkAccount */
+    protected $account;
+
+    /** @var VkApps */
+    protected $apps;
+
+    /** @var VkAudios */
+    protected $audios;
+
+    /** @var VkMessages */
+    protected $messages;
+
+    /** @var VkWall */
+    protected $wall;
+
+    public function __construct(){
+        $c = new ConfigParser("../config.json");
+        $this->setAccessToken($c->getToken());
+        $this->setAppId($c->getAppId());
+        $this->setScopes($c->getScopes());
+        $this->init_classes();
     }
 
     private function init_classes(){
 		require_once(__DIR__ . "/VkAccount.php");
-		$this->account = new VkAccount($this->access_token,$this);
+		$this->account = new VkAccount($this->getAccessToken(),$this);
 		require_once(__DIR__ . "/VkApps.php");
-		$this->apps = new VkApps($this->access_token,$this);
+		$this->apps = new VkApps($this->getAccessToken(),$this);
 		
 		if(!is_null($this->app_id)){
 			$data = $this->apps->get($this->app_id);
@@ -46,29 +49,25 @@ class VkBot{
 		
 		if($this->account->audio){
 			require_once(__DIR__ . "/VkAudios.php");
-			$this->audios = new VkAudios($this->access_token,$this);
+			$this->audios = new VkAudios();
 		}
 		if($this->account->messages){
 			require_once(__DIR__ . "/VkMessages.php");
-			$this->messages = new VkMessages($this->access_token,$this);
+			$this->messages = new VkMessages();
 		}
 		if($this->account->wall){
 			require_once(__DIR__ . "/VkWall.php");
-			$this->wall = new VkWall($this->access_token,$this);
+			$this->wall = new VkWall();
         }
 		//TODO: More Classes
     }
 	
-	public function start(){
-		while(true){
-			
-		}
-	}
+	public function start(){} //TODO
 
     /**
      * @return null|string
      */
-    public function getAccessToken(){
+    public function getAccessToken() : ?string {
         return $this->access_token;
     }
 
@@ -82,7 +81,7 @@ class VkBot{
     /**
      * @return array
      */
-    public function getScopes(){
+    public function getScopes() : array{
         return $this->scopes;
     }
 
@@ -98,7 +97,7 @@ class VkBot{
      * @param array $vars
      * @return array
      */
-    public function api($method = '', array $vars = array()){
+    public function api($method = '', array $vars = []) : array {
 
         $vars['v'] = self::API_VERSION;
         $vars['access_token'] = $this->access_token;
@@ -115,8 +114,8 @@ class VkBot{
      * @param string $params
      * @return string
      */
-    private function http_build_query($method, $params = ''){
-        return  self::METHOD_URL . $method . '?' . $params;
+    private function http_build_query($method, $params = '') : string{
+        return self::METHOD_URL . $method . '?' . $params;
     }
 
     /**
@@ -192,7 +191,7 @@ class VkBot{
     /**
      * @return mixed
      */
-    public function getAppId(){
+    public function getAppId() : ?int{
         return $this->app_id;
     }
 

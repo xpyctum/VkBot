@@ -1,17 +1,9 @@
 <?php
 
-class VkMessages{ //extends VkBot
-	private $client = null;
-	private $token = "";
+class VkMessages extends VkBot{
 
-    public function __construct($token,$parent=null){
-        //parent::__construct($token);
-		$this->token = $token;
-		if(!is_null($parent)){
-			$this->client = $parent;
-		}else{
-			$this->client = new VkBot($token,null,true);
-		}
+    public function __construct(){
+        parent::__construct();
     }
 
     //TODO this
@@ -32,7 +24,7 @@ class VkMessages{ //extends VkBot
         if (!is_null($domain_name)) $r["domain"] = $domain_name;
         if (!is_null($user_id)) $r["user_id"] = $user_id;
         $r["message"] = $text;
-        $this->client->api('messages.send',$r);
+        $this->api('messages.send',$r);
     }
 
     /**
@@ -41,7 +33,7 @@ class VkMessages{ //extends VkBot
      * @return array|null
      */
     public function getHistoryMessagesFromChat($chat_id,$count = 20){
-        $result = $this->client->api('messages.getHistory', array('chat_id' => $chat_id,"count" => $count,"start_message_id" => -$count));
+        $result = $this->api('messages.getHistory', array('chat_id' => $chat_id,"count" => $count,"start_message_id" => -$count));
         if(isset($result["items"])) {
             return $result["items"];
         }else{
@@ -67,7 +59,7 @@ class VkMessages{ //extends VkBot
             "preview_length" => $preview_length
         ];
         if(!is_null($offset)) $r["offset"] = $offset;
-        $result = $this->client->api('messages.get',$r);
+        $result = $this->api('messages.get',$r);
         if(isset($result["items"])){
             return $result["items"];
         }else{

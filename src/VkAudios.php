@@ -1,35 +1,45 @@
 <?php
 
-class VkAudios{ //extends VkBot
-	private $client = null;
-	private $token = "";
-	
+class VkAudios extends VkBot{
+
 	private $genres = [
         1 => "Rock", 2 => "Pop", 3 => "Rap & Hip-Hop", 4 => "Easy Listening", 5 => "Dance & House", 6 => "Instrumental", 7 => "Metal", 21 => "Alternative", 8 => "Dubstep", 9 => "Jazz & Blues", 10 => "Drum & Bass", 11 => "Trance", 12 => "Chanson", 13 => "Ethnic", 14 => "Acoustic & Vocal", 15 => "Reggae", 16 => "Classical", 17 => "Indie Pop", 19 => "Speech", 22 => "Electropop & Disco", 18 => "Other"
     ];
 
-	public function __construct($token,$parent=null){
-		//parent::__construct($token);
-		$this->token = $token;
-		if(!is_null($parent)){
-			$this->client = $parent;
-		}else{
-			$this->client = new VkBot($token,null,true);
-		}		
+	public function __construct(){
+		parent::__construct();
 	}
 
     /**
      * @param $id
+     * @deprecated
      * @return bool
      */
     public function getNameGenreById($id){
 		if(isset($this->genres[$id])){
-			return $this->genres[$id];//true;
+			return $this->genres[$id];
 		}else{
 			return false;
 		}
 	}
 
+    /**
+     * @param $genre_id
+     * @return string|null
+     */
+	public function getNameGenre($genre_id){
+        if(isset($this->genres[$genre_id])){
+            return $this->genres[$genre_id];
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * @param $name
+     * @deprecated
+     * @return bool|int|string
+     */
 	public function getIdGenreByName($name){
 		foreach($this->getGenres() as $id => $genre_name){
 			if(strtolower($genre_name) == strtolower($name)){
@@ -38,6 +48,19 @@ class VkAudios{ //extends VkBot
 		}
 		return false;
 	}
+
+    /**
+     * @param $genre_name
+     * @return int|null
+     */
+	public function getIdGenre($genre_name){
+        foreach($this->getGenres() as $id => $genre){
+            if(strtolower($genre_name) == strtolower($genre)){
+                return $id;
+            }
+        }
+        return null;
+    }
 
     /**
      * @return array
@@ -56,8 +79,7 @@ class VkAudios{ //extends VkBot
 	 * @throws VkException
 	 * @return array
 	 */
-	public function getAudios($owner_id = null, $album_id, $audio_ids = '', $need_user = true, $offset = 0, $count = 6000){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+	public function getAudiosList($owner_id = null, $album_id, $audio_ids = '', $need_user = true, $offset = 0, $count = 6000){
 		$r = array(
 			"album_id" => $album_id,
 			"audio_ids" => $audio_ids,
@@ -66,7 +88,7 @@ class VkAudios{ //extends VkBot
 			"count" => $count
 		);
 		if(!is_null($owner_id)) $r["owner_id"] = $owner_id;
-		return $this->client->api('audio.get',$r);
+		return $this->api('audio.get',$r);
 	}
 	
 	/**
@@ -75,8 +97,7 @@ class VkAudios{ //extends VkBot
 	 * @return array
 	 */
 	public function getAudiosById($request){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
-		return $this->client->api("audio.getById",array("audios" => $request));
+		return $this->api("audio.getById",array("audios" => $request));
 	}
 	
 	/**
@@ -85,8 +106,7 @@ class VkAudios{ //extends VkBot
 	 * @return array
 	 */
 	public function getLyrics($lyrics_id){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
-		return $this->client->api("audio.getLyrics",array("lyrics_id" => $lyrics_id));
+		return $this->api("audio.getLyrics",array("lyrics_id" => $lyrics_id));
 	}
 	
 	/**
@@ -105,7 +125,6 @@ class VkAudios{ //extends VkBot
 	 * @return array
 	 */
 	public function search($q, $auto_complete, $lyrics, $performer_only, $sort, $search_own, $offset = 0, $count = 30){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
 		$r = array(
 			"q" => $q,
 			"auto_complete" => $auto_complete,
@@ -116,7 +135,7 @@ class VkAudios{ //extends VkBot
 			"offset" => $offset,
 			"count" => $count
 		);
-		return $this->client->api("audio.search",$r);
+		return $this->api("audio.search",$r);
 	}
 	
 	/**
@@ -124,8 +143,8 @@ class VkAudios{ //extends VkBot
 	 * @return string
 	 */
 	public function getUploadServer(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
-		$r = $this->client->api("audio.search");
+		$r = $this->api("audio.search");
+		//TODO: Exception
 		return $r['upload_url'];
 	}
 	
@@ -141,25 +160,23 @@ class VkAudios{ //extends VkBot
 	 * @param int $group_id 	- Community ID, needed when adding the audio file to a community.
 	 * @param int $album_id
 	 * @throws VkException
-	 * @return int
+	 * @return array
 	 */
 	public function addAudio($audio_id, $owner_id, $group_id = null, $album_id = null){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
 		$r = array("audio_id" => $audio_id, "owner_id" => $owner_id);
 		if(!is_null($group_id)) $r['group_id'] = $group_id;
 		if(!is_null($album_id)) $r['album_id'] = $album_id;
-		return $this->client->api("audio.add",$r);
+		return $this->api("audio.add",$r);
 	}
 	
 	/**
 	 * @param int $audio_id - Audio file ID.
 	 * @param int $owner_id - ID of the user or community that owns the audio file.
 	 * @throws VkException
-	 * @return int
+	 * @return array
 	 */
 	public function deleteAudio($audio_id, $owner_id){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
-		return $this->client->api("audio.delete",array("audio_id" => $audio_id,"owner_id" => $owner_id));
+		return $this->api("audio.delete",array("audio_id" => $audio_id,"owner_id" => $owner_id));
 	}
 	 
 	/**
@@ -172,10 +189,9 @@ class VkAudios{ //extends VkBot
 	 * @param bool $no_search		 - true  — audio file will not be available for search
 	 *								   false — audio file will be available for search (default)
 	 * @throws VkException
-	 * @return int
+	 * @return array
 	 */
 	public function editAudio($owner_id, $audio_id, $artist = null, $title = null, $text = null, $genre_id = null, $no_search = false){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
 		$r = array("owner_id" => $owner_id,"audio_id" => $audio_id);
 		if(!is_null($artist)) $r['artist'] = $artist;
 		if(!is_null($title)) $r['title'] = $title;
@@ -185,7 +201,7 @@ class VkAudios{ //extends VkBot
 			if(!is_numeric($genre_id)) $genre_id = $this->getIdGenreByName($genre_id);
 			if($genre_id != false) $r['genre_id'] = $genre_id;
 		}
-		return $this->client->api("audio.edit",$r);
+		return $this->api("audio.edit",$r);
 	}
 	
 	/**
@@ -194,15 +210,14 @@ class VkAudios{ //extends VkBot
 	 * @param int $before	- ID of the audio file before which to place the audio file.
 	 * @param int $after	- ID of the audio file after which to place the audio file.
 	 * @throws VkException
-	 * @return int
+	 * @return array
 	 */
 	public function reorderAudio($audio_id, $owner_id = null, $before = null, $after = null){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
 		$r = array("audio_id" => $audio_id);
 		if(!is_null($owner_id)) $r['owner_id'] = $owner_id;
 		if(!is_null($before)) $r['before'] = $before;
 		if(!is_null($after)) $r['after'] = $after;
-		return $this->client->api("audio.reorder",$r);
+		return $this->api("audio.reorder",$r);
 	}
 	
 	/**
@@ -212,10 +227,9 @@ class VkAudios{ //extends VkBot
 	 * @return array
 	 */
 	public function restoreAudio($audio_id, $owner_id = null){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
 		$r = array("audio_id" => $audio_id);
 		if(!is_null($owner_id)) $r['owner_id'] = $owner_id;
-		return $this->client->api("audio.restore",$r);
+		return $this->api("audio.restore",$r);
 	}
 	 
 	//TODO
@@ -223,7 +237,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function getAlbums(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	 
@@ -232,7 +246,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function addAlbum(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	 
@@ -241,7 +255,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function editAlbum(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	//TODO
@@ -249,7 +263,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function deleteAlbum(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	//TODO
@@ -257,7 +271,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function moveToAlbum(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	 
@@ -266,7 +280,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function setBroadcast(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	 
@@ -275,7 +289,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function getBroadcastList(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	 
@@ -284,7 +298,7 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function getRecommendations(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
 	 
 	 
@@ -293,17 +307,17 @@ class VkAudios{ //extends VkBot
 	 *
 	 */
 	public function getPopular(){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
+		 
 	}
-	 
-	 
-	/** https://vk.com/dev/audio.getCount
-	 * @param int $owner_id
-	 * @return int
-	 */
+
+
+    /** https://vk.com/dev/audio.getCount
+     * @param int $owner_id
+     * @return array
+     * @throws VkException
+     */
 	public function getCount($owner_id){
-		if(!$this->client->account->audio) throw new VkException("",7); //TODO
-		return $this->client->api("audio.getCount",array("owner_id" => $owner_id));
+		return $this->api("audio.getCount",["owner_id" => $owner_id]);
 	}
 	 
 }

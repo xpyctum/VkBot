@@ -1,17 +1,9 @@
 <?php
 
-class VkApps{ //extends VkBot
-	private $client = null;
-	private $token = "";
+class VkApps extends VkBot{
 
-    public function __construct($token,$parent=null){
-        //parent::__construct($token);
-		$this->token = $token;
-		if(!is_null($parent)){
-			$this->client = $parent;
-		}else{
-			$this->client = new VkBot($token,null,true);
-		}
+    public function __construct(){
+        parent::__construct();
     }
 	
 	//TODO
@@ -43,7 +35,7 @@ class VkApps{ //extends VkBot
 		if(!is_null($return_friends)) $r['return_friends'] = $return_friends;
 		if(!is_null($fields)) $r['fields'] = $fields;
 		if(!is_null($name_case)) $r['name_case'] = $name_case;
-		return $this->client->api("apps.get",$r);
+		return $this->api("apps.get",$r);
 	}
 	
 	
