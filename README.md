@@ -28,6 +28,5 @@ print_r($bot->getMessagesApi()->getUnreadMessages()); // Покажет непр
 - [x] ConfigParser
 - [ ] Обьекты информации
 - [ ] Messages API
-- [ ] Audios API
 - [ ] Videos API
 - [ ] Wall API

@@ -118,10 +118,11 @@ class VkAccount extends VkBot{
 	 *
 	 */
 	public function setPushSettings(){}
-	
-	/** https://vk.com/dev/account.getAppPermissions
-	 *
-	 */
+
+    /** https://vk.com/dev/account.getAppPermissions
+     * @param null $user_id
+     * @return array
+     */
 	function getAppPermissions($user_id = null){
 		return $this->api("account.getAppPermissions",(!is_null($user_id) ? ["user_id" => $user_id] : [] ));
 	}

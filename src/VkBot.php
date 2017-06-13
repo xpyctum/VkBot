@@ -5,6 +5,7 @@ require_once(__DIR__ . "/ConfigParser.php");
 
 class VkBot{
 
+    const VKBOT_APP_VERSION = '1.0.2';
     const API_VERSION = '5.24';
     const METHOD_URL = 'https://api.vk.com/method/';
 
@@ -28,8 +29,8 @@ class VkBot{
     /** @var VkWall */
     protected $wall;
 
-    public function __construct(){
-        $c = new ConfigParser("../config.json");
+    public function __construct($config_path = "../config.json"){
+        $c = new ConfigParser($config_path);
         $this->setAccessToken($c->getToken());
         $this->setAppId($c->getAppId());
         $this->setScopes($c->getScopes());

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Class VkAudios
+ * Deprecated class. Read more here: https://vk.com/dev/audio_api
+ */
 class VkAudios extends VkBot{
 
 	private $genres = [

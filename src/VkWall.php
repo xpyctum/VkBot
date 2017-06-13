@@ -17,5 +17,4 @@ class VkWall extends VkBot{
         return $wall["items"];
     }
 
-
 }
